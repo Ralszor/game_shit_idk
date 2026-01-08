@@ -1,0 +1,1 @@
+..\lovec.exe . --debug-render
