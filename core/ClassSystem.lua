@@ -1,6 +1,9 @@
 ---@class ClassSystem
 ---@field CLASS_MT metatable
 local ClassSystem = {}
+function isClass(maybe_a_class)
+    return maybe_a_class.classname ~= nil
+end
 
 ClassSystem.CLASS_MT = {
     __call = function (class, ...)
@@ -23,9 +26,12 @@ ClassSystem.CLASS_INCLUDE_SKIP_FIELDS = {
 
 function ClassSystem.BASE_CLASS:init() end
 
+---@generic T
 ---@param classname string
----@param include table?
+---@param include T?
 ---@param newclass table?
+---@return table
+---@return T
 function ClassSystem.new(classname, include, newclass)
     newclass = newclass or {}
     include = include or ClassSystem.BASE_CLASS

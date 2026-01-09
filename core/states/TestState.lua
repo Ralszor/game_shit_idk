@@ -2,11 +2,12 @@
 local TestState = {}
 
 function TestState:enter()
+    love.audio.stop()
     self.timer = Timer()
     self.stage = Stage()
     self.timer:after(1, function()
-        Assets.playSound("splat")
-        self.stage:add(Fuck())
+        --Assets.playSound("splat")
+        self.stage:add(Character("spr_hero2_1"))
     end)
 end
 
@@ -18,7 +19,7 @@ function TestState:draw()
     Draw.setLineWidth(1)
     love.graphics.setFont(Assets.getFont("main", 16))
     Draw.setColor(0, 1, 0, 1)
-    Draw.print("Put some \nbullshit\nhere", 20, 15)
+    Draw.print("What if i\nset my canvas\nto 4\n\n\n\nloser", 20, 15)
     Draw.setColor(1,1,1,1)
     self.stage:draw()
 end

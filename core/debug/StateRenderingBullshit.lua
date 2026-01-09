@@ -5,11 +5,12 @@ local StateRenderingBullshit = {}
 
 function StateRenderingBullshit:update() end
 
+local font = love.graphics.newFont("assets/fonts/main.ttf", 8)
 function StateRenderingBullshit:draw()
     local state = TableUtils.getKey(StateManager.States, StateManager.CurrentState)
-    love.graphics.setFont(Assets.getFont("main", 8))
+    love.graphics.setFont(font)
     Draw.print("Current State: "..state, 2, 2)
-    --Draw.print("FPS: "..love.timer.getFPS(),2, 10)
+    Draw.print("fake fps: "..love.timer.getFPS(),2, 10)
 end
 
 return StateRenderingBullshit

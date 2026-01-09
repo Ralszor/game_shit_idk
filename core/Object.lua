@@ -10,8 +10,8 @@ local Object, super = class("Object")
 function Object:init(x, y, w, h, scale_x, scale_y)
     self.x = x or 0
     self.y = y or 0
-    self.width = w or love.graphics:getWidth()
-    self.height = h or love.graphics:getHeight()
+    self.width = w or love.graphics.getWidth()
+    self.height = h or love.graphics.getHeight()
     self.scale_x = scale_x or 1
     self.scale_y = scale_y or 1
     self.stage = nil
