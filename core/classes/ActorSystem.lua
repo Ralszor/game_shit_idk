@@ -3,6 +3,7 @@ local ActorSystem, super = class("ActorSystem")
 
 function ActorSystem:init()
     super.init(self)
+    
 end
 
 function ActorSystem:update()

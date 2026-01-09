@@ -7,7 +7,7 @@ function TestState:enter()
     self.stage = Stage()
     self.timer:after(1, function()
         --Assets.playSound("splat")
-        self.stage:add(Character("spr_hero2_1"))
+        self.stage:add(Character())
     end)
 end
 
