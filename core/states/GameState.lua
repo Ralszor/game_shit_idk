@@ -4,9 +4,21 @@ local GameState = {}
 function GameState:enter()
     love.audio.stop()
     self.timer = Timer()
+    self.frametimer = 0
     self.warn = false
+    self.prompt = false
     self.con = 0
+    self.pressed_z = false
     self:doTheFuckingSequence()
+    self.timer:every(1, function()
+        if self.frametimer > 225 and not self.pressed_z then
+            if self.prompt == false then
+                self.prompt = true
+            elseif self.prompt == true then
+                self.prompt = false
+            end
+        end
+    end)
 end
 
 function GameState:doTheFuckingSequence()
@@ -25,6 +37,8 @@ function GameState:doTheFuckingSequence()
         self.con = 1
         Assets.playSound("nocontroller")
         self.warn = true
+        wait(2)
+        self.prompt = true
     end)
 end
 
@@ -39,10 +53,14 @@ function GameState:draw()
         love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-2, love.graphics.getWidth()/2, "center")
         
     end
+    if self.prompt then
+        love.graphics.printf("Press Z to Continue", 0, SCREEN_HEIGHT/2+50, love.graphics.getWidth()/2, "center")
+    end
 end
 
 function GameState:update()
     self.timer:update()
+    self.frametimer = self.frametimer + 1
 end
 
 return GameState
