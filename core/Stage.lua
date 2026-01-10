@@ -12,6 +12,7 @@ function Stage:add(what)
     table.insert(self.objects, what)
     what.stage = self
     what:onAdd(self)
+    return what
 end
 
 function Stage:update()
@@ -26,4 +27,9 @@ function Stage:draw()
     end
 end
 
+function Stage:remove(what)
+    if what then
+        TableUtils.removeValue(self.objects, what)
+    end
+end
 return Stage

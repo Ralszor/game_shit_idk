@@ -1,66 +1,18 @@
 ---@class GameState
 local GameState = {}
 
+local IntroObject = require("data.IntroObject")
 function GameState:enter()
-    love.audio.stop()
-    self.timer = Timer()
-    self.frametimer = 0
-    self.warn = false
-    self.prompt = false
-    self.con = 0
-    self.pressed_z = false
-    self:doTheFuckingSequence()
-    self.timer:every(1, function()
-        if self.frametimer > 225 and not self.pressed_z then
-            if self.prompt == false then
-                self.prompt = true
-            elseif self.prompt == true then
-                self.prompt = false
-            end
-        end
-    end)
-end
-
-function GameState:doTheFuckingSequence()
-    love.graphics.clear(0,0,0,1)
-    self.timer:script(function (wait)
-        wait(1)
-        local a = Assets.playSound("intro")
-        print(a:getDuration())
-        wait(0.855)
-        self.con = 0.25
-        wait(0.855)
-        self.con = 0.5
-        wait(0.855)
-        self.con = 0.75
-        wait(0.855)
-        self.con = 1
-        Assets.playSound("nocontroller")
-        self.warn = true
-        wait(2)
-        self.prompt = true
-    end)
+    self.stage = Stage()
+    self.stage:add(IntroObject())
 end
 
 function GameState:draw()
-    love.graphics.clear(69/255, 84/255, 237/255, 1*self.con)
-    if self.warn then
-        love.graphics.clear(69/255, 84/255, 237/255, 1)
-        Draw.setColor(1,1,1,1)
-        love.graphics.setFont(Assets.getFont("main", 8))
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-24, love.graphics.getWidth()/2, "center")
-        love.graphics.printf("| NO CONTROLLER |", 0, SCREEN_HEIGHT/2-10, love.graphics.getWidth()/2, "center")
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-2, love.graphics.getWidth()/2, "center")
-        
-    end
-    if self.prompt then
-        love.graphics.printf("Press Z to Continue", 0, SCREEN_HEIGHT/2+50, love.graphics.getWidth()/2, "center")
-    end
+    self.stage:draw()
 end
 
 function GameState:update()
-    self.timer:update()
-    self.frametimer = self.frametimer + 1
+    self.stage:update()
 end
 
 return GameState

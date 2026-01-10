@@ -16,6 +16,7 @@ Fuck = require("data.FuckassObject")
 Character = require("core.Character")
 Input = require("core.Input")
 JSON = require("core.lib.json")
+Hero = require("core.classes.Hero")
 
 Assets = require("core.Assets") --Totally not ripped from Kristal hehehehehe :3
 TableUtils = require("core.utils.TableUtils") --Totally not ripped from Kristal hehehehehe :3
@@ -171,7 +172,7 @@ function love.draw()
     love.graphics.clear(0.3,0.3,0.3)
     Draw.setColor(0, 1, 0, 1)
     Draw.setLineWidth(1)
-    Draw.rectangle("line", 10, 10, SCREEN_WIDTH-10, SCREEN_HEIGHT-20)
+    Draw.rectangle("line", 10, 10, SCREEN_WIDTH-20, SCREEN_HEIGHT-20)
     Draw.setLineWidth(1)
     love.graphics.setFont(bigf)
     Draw.setColor(0, 1, 0, 1)
@@ -187,5 +188,5 @@ function love.draw()
     
     love.graphics.setCanvas()
     CANVAS:setFilter("nearest")
-    Draw.draw(CANVAS, love.graphics:getWidth()/2, love.graphics:getHeight()/2, 0, 2, 2, CANVAS:getWidth()/2, CANVAS:getHeight()/2)
+    Draw.draw(CANVAS, love.graphics:getWidth()/2, love.graphics:getHeight()/2, 0, 2, 2, 0.5, 0.5)
 end

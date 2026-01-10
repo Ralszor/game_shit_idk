@@ -1,4 +1,5 @@
 ---@class Object : Class
+---@field stage Stage
 local Object, super = class("Object")
 
 ---@param x integer
@@ -31,6 +32,7 @@ function Object:transform() end
 function Object:onAdd(to_what) end
 
 function Object:remove()
+    self.stage:remove(self)
     self.stage = nil
 end
 

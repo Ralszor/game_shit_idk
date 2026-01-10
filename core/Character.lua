@@ -1,7 +1,6 @@
 ---@class Character : Object
 local Character, super = class("Character", Object)
 
-local CharacterController = require("core.classes.CharacterController")
 
 local function normalize_assets_path(p)
     if not p then return "" end
@@ -18,12 +17,11 @@ function Character:init(name, x, y, w, h, scale_x, scale_y)
     -- set this to the loader-relative base path for the char (relative to assets/sprites)
     self.path = normalize_assets_path("sprites/chars/"..self.name)
     self.hitbox = {}
-    self.controller = CharacterController()
     self.rotation = 0
     self.isMoving = false
 
     -- animation timing config
-    self.anim_speed = 7/30 -- seconds per frame
+    self.anim_speed = 8/30 -- seconds per frame
 
     local base = normalize_assets_path(self.path)
 
@@ -70,10 +68,6 @@ function Character:update(dt)
 
     -- remember previous moving state so we only reset timers on transitions
     local prevMoving = self._wasMoving or false
-
-    if self.controller then
-        self:handleMovement()
-    end
 
     local nowMoving = self.isMoving
 
@@ -126,69 +120,13 @@ function Character:getHitbox()
     end
 end
 
-function Character:handleMovement()
-    local dx, dy = 0, 0
-    local speed = 3
-
-    if self.controller:isKeyDown("left") then dx = dx - 1 end
-    if self.controller:isKeyDown("right") then dx = dx + 1 end
-    if self.controller:isKeyDown("up") then dy = dy - 1 end
-    if self.controller:isKeyDown("down") then dy = dy + 1 end
-
-    -- move (normalize diagonal so diagonal speed isn't faster)
-    if dx ~= 0 or dy ~= 0 then
-        -- normalize diagonal
-        if dx ~= 0 and dy ~= 0 then
-            local inv = 1 / math.sqrt(2)
-            dx = dx * inv
-            dy = dy * inv
-        end
-        self.x = self.x + dx * speed
-        self.y = self.y + dy * speed
-        self.isMoving = true
-    else
-        self.isMoving = false
-    end
-
-    -- pick animation name based on direction (8-way)
-    local anim = nil
-    if dx == 0 and dy > 0 then
-        anim = "walk/down"
-    elseif dx == 0 and dy < 0 then
-        anim = "walk/up"
-    elseif dx > 0 and dy == 0 then
-        anim = "walk/right"
-    elseif dx < 0 and dy == 0 then
-        anim = "walk/left"
-    elseif dx > 0 and dy > 0 then
-        -- prefer diagonal anim if you've added them, otherwise fallback
-        anim = self.animations["walk/down_right"] and "walk/down_right" or "walk/right"
-    elseif dx < 0 and dy > 0 then
-        anim = self.animations["walk/down_left"] and "walk/down_left" or "walk/left"
-    elseif dx > 0 and dy < 0 then
-        anim = self.animations["walk/up_right"] and "walk/up_right" or "walk/right"
-    elseif dx < 0 and dy < 0 then
-        anim = self.animations["walk/up_left"] and "walk/up_left" or "walk/left"
-    end
-
-    -- set animation once (if any)
-    if anim then
-        self:setAnimation(anim)
-    end
-
-    -- optional rotation key still handled:
-    if self.controller:isKeyDown("r") then
-        self.rotation = self.rotation + 1
-    end
-end
-
 function Character:onAdd(stage)
     Assets.playSound("sparkle_gem")
 end
 
 function Character:draw()
     super.draw(self)
-    Draw.draw(self.sprite, self.x, self.y, math.rad(self.rotation), self.scale_x, self.scale_y)
+    Draw.draw(self.sprite, self.x, self.y, math.rad(self.rotation), self.scale_x, self.scale_y, 0.5, 1)
 end
 
 return Character

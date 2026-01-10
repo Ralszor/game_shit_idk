@@ -19,8 +19,8 @@ function Draw.draw(texture, x, y, r, sx, sy, ox, oy, kx, ky)
         r or 0,
         sx or 1,
         sy or 1,
-        ox,
-        oy,
+        (ox or 0)*texture:getWidth(),
+        (oy or 0)*texture:getHeight(),
         kx,
         ky
     )
