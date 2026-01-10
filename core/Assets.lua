@@ -311,13 +311,17 @@ end
 
 ---@param path string
 ---@return love.Image[]
+
 function Assets.getFramesOrTexture(path)
-    local texture = Assets.getTexture(path)
-    if texture then
-        return {texture}
-    else
-        return Assets.getFrames(path)
+    local frames = Assets.getFrames(path)
+    if frames and #frames > 0 then
+        return frames
     end
+    local ok, tex = pcall(Assets.getTexture, path)
+    if ok and tex then
+        return { tex }
+    end
+    error("Failed to get Frame(s) or Texture ("..path..")")
 end
 
 ---@param x number

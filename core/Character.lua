@@ -12,23 +12,11 @@ local function normalize_assets_path(p)
     return p
 end
 
-local function frames_or_texture(path)
-    local frames = Assets.getFrames(path)
-    if frames and #frames > 0 then
-        return frames
-    end
-    local ok, tex = pcall(Assets.getTexture, path)
-    if ok and tex then
-        return { tex }
-    end
-    return nil
-end
-
-function Character:init(sprite, x, y, w, h, scale_x, scale_y)
+function Character:init(name, x, y, w, h, scale_x, scale_y)
     super.init(self, x, y, w, h, scale_x, scale_y)
-    self.name = nil
+    self.name = name or "kris"
     -- set this to the loader-relative base path for the char (relative to assets/sprites)
-    self.path = normalize_assets_path("sprites/chars/empty")
+    self.path = normalize_assets_path("sprites/chars/"..self.name)
     self.hitbox = {}
     self.controller = CharacterController()
     self.rotation = 0
@@ -40,10 +28,10 @@ function Character:init(sprite, x, y, w, h, scale_x, scale_y)
     local base = normalize_assets_path(self.path)
 
     self.animations = {
-        ["walk/up"]    = frames_or_texture(base .. "/walk/up"),
-        ["walk/down"]  = frames_or_texture(base .. "/walk/down"),
-        ["walk/left"]  = frames_or_texture(base .. "/walk/left"),
-        ["walk/right"] = frames_or_texture(base .. "/walk/right"),
+        ["walk/up"]    = Assets.getFramesOrTexture(base .. "/walk/up"),
+        ["walk/down"]  = Assets.getFramesOrTexture(base .. "/walk/down"),
+        ["walk/left"]  = Assets.getFramesOrTexture(base .. "/walk/left"),
+        ["walk/right"] = Assets.getFramesOrTexture(base .. "/walk/right"),
         -- add any other animations here
     }
 

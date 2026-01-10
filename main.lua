@@ -15,6 +15,7 @@ StateManager = require("core.StateManager")
 Fuck = require("data.FuckassObject")
 Character = require("core.Character")
 Input = require("core.Input")
+JSON = require("core.lib.json")
 
 Assets = require("core.Assets") --Totally not ripped from Kristal hehehehehe :3
 TableUtils = require("core.utils.TableUtils") --Totally not ripped from Kristal hehehehehe :3
