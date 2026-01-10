@@ -6,7 +6,7 @@ StateManager.States = {
     TESTING = require("core.states.TestState"),
     LOADING = require("core.states.LoadState"),
     MENUING = require("core.states.MenuState"),
-    -- GAMEING = require("core.states.GameState"),
+    GAMEING = require("core.states.GameState"),
 }
 
 StateManager.CurrentState = StateManager.States.NONE

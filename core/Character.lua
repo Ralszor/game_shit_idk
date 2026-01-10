@@ -5,7 +5,6 @@ local CharacterController = require("core.classes.CharacterController")
 
 local function normalize_assets_path(p)
     if not p then return "" end
-    -- Accept paths like "assets/sprites/...", "sprites/...", or already "chars/..."
     p = p:gsub("\\", "/")
     p = p:gsub("^/+", "")
     p = p:gsub("^assets/sprites/", "")
@@ -14,7 +13,6 @@ local function normalize_assets_path(p)
 end
 
 local function frames_or_texture(path)
-    -- Try frames first (returns table of images), otherwise wrap a single texture into a table.
     local frames = Assets.getFrames(path)
     if frames and #frames > 0 then
         return frames
@@ -29,15 +27,16 @@ end
 function Character:init(sprite, x, y, w, h, scale_x, scale_y)
     super.init(self, x, y, w, h, scale_x, scale_y)
     self.name = nil
-    -- Prefer the loader-relative path (relative to assets/sprites). Accept older "sprites/..." too.
+    -- set this to the loader-relative base path for the char (relative to assets/sprites)
     self.path = normalize_assets_path("sprites/chars/empty")
     self.hitbox = {}
     self.controller = CharacterController()
     self.rotation = 0
     self.isMoving = false
 
-    -- Build animation paths from self.path so you don't need to hardcode the full keys.
-    -- Example: if self.path == "chars/empty", the full frames key becomes "chars/empty/walk/down"
+    -- animation timing config
+    self.anim_speed = 7/30 -- seconds per frame
+
     local base = normalize_assets_path(self.path)
 
     self.animations = {
@@ -45,6 +44,7 @@ function Character:init(sprite, x, y, w, h, scale_x, scale_y)
         ["walk/down"]  = frames_or_texture(base .. "/walk/down"),
         ["walk/left"]  = frames_or_texture(base .. "/walk/left"),
         ["walk/right"] = frames_or_texture(base .. "/walk/right"),
+        -- add any other animations here
     }
 
     -- current animation state
@@ -54,40 +54,76 @@ function Character:init(sprite, x, y, w, h, scale_x, scale_y)
     self.animtimer = 0
 
     -- safe assignment: if frames missing, fall back to placeholder
-    self.sprite = (self.current_frames[1] ~= nil) and self.current_frames[1] or (pcall(Assets.getTexture, "no_tiny") and Assets.getTexture("no_tiny"))
+    local ok, fallback = pcall(Assets.getTexture, "no_tiny")
+    self.sprite = (self.current_frames[1] ~= nil) and self.current_frames[1] or (ok and fallback)
 end
 
 function Character:setAnimation(name)
+    if self.current_anim == name then
+        return
+    end
     local frames = self.animations[name]
     if not frames then
         print("setAnimation: animation not found:", name)
         return
     end
+    -- switching animations: keep timer so it doesn't stutter when changing direction,
+    -- but if you want it to restart every switch, uncomment the next line:
+    -- self.animtimer = 0
     self.current_anim = name
     self.current_frames = frames
     self.current_frame = 1
-    self.animtimer = 0
+    -- update sprite to the first frame immediately
+    self.sprite = self.current_frames[self.current_frame] or self.sprite
 end
 
 function Character:update(dt)
     super.update(self)
+
+    -- remember previous moving state so we only reset timers on transitions
+    local prevMoving = self._wasMoving or false
+
     if self.controller then
         self:handleMovement()
     end
 
-    -- update animation timer and pick frame (example timing)
-    if self.current_frames and #self.current_frames > 0 then
-        -- advance timer (you may want to tweak speed)
-        self.animtimer = self.animtimer + (dt or 1/60)
-        local speed = 0.12 -- seconds per frame
+    local nowMoving = self.isMoving
+
+    -- transition: started moving -> reset animtimer so walk starts fresh
+    if nowMoving and not prevMoving then
+        self.animtimer = 0
+        -- optionally do not reset current_frame so walking continues where it left off
+        -- self.current_frame = 1
+    end
+
+    -- transition: stopped moving -> snap to first frame and reset timer
+    if not nowMoving and prevMoving then
+        self.animtimer = 0
+        self.current_frame = 1
+        if self.current_frames and #self.current_frames > 0 then
+            self.sprite = self.current_frames[1] or self.sprite
+        end
+    end
+
+    -- animate while moving
+    if nowMoving and self.current_frames and #self.current_frames > 1 then
+        self.animtimer = self.animtimer + (dt or (1/60))
+        local speed = self.anim_speed or 0.12
         local frame_index = math.floor(self.animtimer / speed) % #self.current_frames + 1
-        self.current_frame = frame_index
-        self.sprite = self.current_frames[self.current_frame] or self.sprite
-    else
-        -- fallback if frames unavailable
+        if frame_index ~= self.current_frame then
+            self.current_frame = frame_index
+            self.sprite = self.current_frames[self.current_frame] or self.sprite
+        end
+    end
+
+    -- ensure fallback sprite when there are no frames
+    if (not self.current_frames or #self.current_frames == 0) then
         local ok, tex = pcall(Assets.getTexture, "no_tiny")
         if ok and tex then self.sprite = tex end
     end
+
+    -- store moving state for next update
+    self._wasMoving = nowMoving
 end
 
 function Character:getWidth() return self.width end
@@ -103,30 +139,58 @@ function Character:getHitbox()
 end
 
 function Character:handleMovement()
-    self.isMoving = false
-    if self.controller:isKeyDown("down") then
-        self.y = self.y + 4
+    local dx, dy = 0, 0
+    local speed = 3
+
+    if self.controller:isKeyDown("left") then dx = dx - 1 end
+    if self.controller:isKeyDown("right") then dx = dx + 1 end
+    if self.controller:isKeyDown("up") then dy = dy - 1 end
+    if self.controller:isKeyDown("down") then dy = dy + 1 end
+
+    -- move (normalize diagonal so diagonal speed isn't faster)
+    if dx ~= 0 or dy ~= 0 then
+        -- normalize diagonal
+        if dx ~= 0 and dy ~= 0 then
+            local inv = 1 / math.sqrt(2)
+            dx = dx * inv
+            dy = dy * inv
+        end
+        self.x = self.x + dx * speed
+        self.y = self.y + dy * speed
         self.isMoving = true
-        self:setAnimation("walk/down")
+    else
+        self.isMoving = false
     end
-    if self.controller:isKeyDown("up") then
-        self.y = self.y - 4
-        self.isMoving = true
-        self:setAnimation("walk/up")
+
+    -- pick animation name based on direction (8-way)
+    local anim = nil
+    if dx == 0 and dy > 0 then
+        anim = "walk/down"
+    elseif dx == 0 and dy < 0 then
+        anim = "walk/up"
+    elseif dx > 0 and dy == 0 then
+        anim = "walk/right"
+    elseif dx < 0 and dy == 0 then
+        anim = "walk/left"
+    elseif dx > 0 and dy > 0 then
+        -- prefer diagonal anim if you've added them, otherwise fallback
+        anim = self.animations["walk/down_right"] and "walk/down_right" or "walk/right"
+    elseif dx < 0 and dy > 0 then
+        anim = self.animations["walk/down_left"] and "walk/down_left" or "walk/left"
+    elseif dx > 0 and dy < 0 then
+        anim = self.animations["walk/up_right"] and "walk/up_right" or "walk/right"
+    elseif dx < 0 and dy < 0 then
+        anim = self.animations["walk/up_left"] and "walk/up_left" or "walk/left"
     end
-    if self.controller:isKeyDown("left") then
-        self.x = self.x - 4
-        self.isMoving = true
-        self:setAnimation("walk/left")
+
+    -- set animation once (if any)
+    if anim then
+        self:setAnimation(anim)
     end
-    if self.controller:isKeyDown("right") then
-        self.x = self.x + 4
-        self.isMoving = true
-        self:setAnimation("walk/right")
-    end
+
+    -- optional rotation key still handled:
     if self.controller:isKeyDown("r") then
         self.rotation = self.rotation + 1
-        self.isMoving = true
     end
 end
 
