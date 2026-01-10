@@ -4,7 +4,7 @@ local Stage = class("Stage")
 function Stage:init()
     self.objects = {}
     self.objects_to_remove = {}
-    print("Stage is up cuh")
+    --print("Stage is up cuh")
 end
 
 ---@param what Object

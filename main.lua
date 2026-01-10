@@ -17,13 +17,13 @@ Character = require("core.Character")
 Input = require("core.Input")
 JSON = require("core.lib.json")
 Hero = require("core.classes.Hero")
+World = require("core.objects.World")
 
 Assets = require("core.Assets") --Totally not ripped from Kristal hehehehehe :3
 TableUtils = require("core.utils.TableUtils") --Totally not ripped from Kristal hehehehehe :3
 MathUtils = require("core.utils.MathUtils") --Totally not ripped from Kristal hehehehehe :3
 StringUtils = require("core.utils.StringUtils") --Totally not ripped from Kristal hehehehehe :3
 Timer = require("core.lib.timer") --Totally not ripped from Kristal hehehehehe :3
-Sprite = require("core.objects.Sprite") --Totally not ripped from Kristal hehehehehe :3
 EventRegistry = require("core.EventRegistry") --Totally not ripped from Kristal hehehehehe :3
 
 function love.load(args)
