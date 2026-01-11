@@ -11,6 +11,8 @@ function IntroObject:init()
     self.prompt = false
     self.con = 0
     self.con2 = 0
+    self.con3 = 0
+    self.rendering = false
     self.pressed_z = false
     self:doTheFuckingSequence(1)
     self.stupidBars = {}
@@ -54,6 +56,18 @@ function IntroObject:doTheFuckingSequence(part)
             for k, bar in ipairs(self.stupidBars) do
                 bar:remove()
             end
+            wait(2)
+            self:doTheFuckingSequence(3)
+        end)
+    end
+    if part == 3 then
+        self.rendering = true
+        self.timer:script(function (wait)
+            for i = 1, 8 do
+                print(i)
+                self.con3 = self.con3 + 1
+                wait(0.5)
+            end
         end)
     end
 end
@@ -64,7 +78,12 @@ end
 
 function IntroObject:draw()
     if not self.pressed_z then
+        
         love.graphics.clear(69/255, 84/255, 237/255, 1*self.con)
+        if not self.warn then
+            Draw.setColor(0,0,0,1*(self.con-0.25))
+            Draw.draw(Assets.getTexture("mantle_title"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 1, 1,0.5, 0.5)
+        end
     end
     if self.warn then
         love.graphics.clear(69/255, 84/255, 237/255, 1)
@@ -97,9 +116,15 @@ function IntroObject:draw()
             Draw.rectangle("fill", 0, SCREEN_HEIGHT/4, SCREEN_WIDTH, SCREEN_HEIGHT/2)
         elseif self.con2 == 8 then
             Draw.rectangle("fill",0,0,SCREEN_WIDTH, SCREEN_HEIGHT)
-        elseif self.con2 == 9 then
+        elseif self.con2 == 9 hen
             love.graphics.clear(0,0,0,1)
             Draw.draw(Assets.getTexture("boardheart"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 1, 1, 0.5, 0.5)
+        end
+        if self.rendering then
+            Draw.setColor(COLORS.white)
+            Draw.draw(Assets.getTexture("hevy"), 0, 0)
+            Draw.setColor(COLORS.black)
+            love.graphics.rectangle("fill",0, SCREEN_HEIGHT, SCREEN_WIDTH, -SCREEN_HEIGHT+(30*self.con3))
         end
     end
 end

@@ -5,6 +5,7 @@ MenuState.opts = {
     { name = "START", callback = function() StateManager.setState("GAMEING") end },
     { name = "LOAD", callback = function() StateManager.setState("GAMEING") end },
     { name = "FUCK OFF", callback = function() love.event.quit() end },
+    { name = "HEAVY MODE", callback = function() MenuState.opts[4].callback() end},
 }
 
 function MenuState:enter()

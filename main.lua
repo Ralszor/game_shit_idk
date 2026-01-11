@@ -1,7 +1,7 @@
 ------------------------------------------------------------
 ------------------------------------------------------------
 ------------------------------------------------------------
---Look at you, peeking in the code. Disgusting.
+--If you're reading through my code... I'm sorry. I'm so fucking sorry. /ref
 ------------------------------------------------------------
 ------------------------------------------------------------
 ------------------------------------------------------------
@@ -25,6 +25,8 @@ MathUtils = require("core.utils.MathUtils") --Totally not ripped from Kristal he
 StringUtils = require("core.utils.StringUtils") --Totally not ripped from Kristal hehehehehe :3
 Timer = require("core.lib.timer") --Totally not ripped from Kristal hehehehehe :3
 EventRegistry = require("core.EventRegistry") --Totally not ripped from Kristal hehehehehe :3
+
+important = love.filesystem.getInfo("very_important_file/coconut")
 
 function love.load(args)
     love.window.setMode(CANVAS:getWidth()*2, CANVAS:getHeight()*2, { resizable = true })
@@ -78,8 +80,8 @@ function love.errorhandler(msg)
         for name, a, b, c, d, e, f in love.event.poll() do
             if name == "quit" then return 1 end
             if name == "keypressed" and a == "escape" then return 1 end
+            if name == "keypressed" and a == "r" then return "restart" end
         end
-
         -- 4. Draw your custom UI
         love.graphics.clear(0.1, 0.1, 0.1) -- Dark background
         
@@ -94,6 +96,7 @@ function love.errorhandler(msg)
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.printf("Traceback:\n" .. traceback, 20, 100, love.graphics.getWidth() - 40)
         
+        love.graphics.printf("Press R to restart", 0, love.graphics.getHeight() - 125, love.graphics.getWidth(), "center")
         love.graphics.printf("Press ESC to quit", 0, love.graphics.getHeight() - 50, love.graphics.getWidth(), "center")
         love.graphics.printf("Press Ctrl + C to copy traceback", 0, love.graphics.getHeight() - 75, love.graphics.getWidth(), "center")
         love.graphics.printf("Protip: write love.graphics.setCanvas(4) for free moniey", 0, love.graphics.getHeight() - 100, love.graphics.getWidth(), "center")

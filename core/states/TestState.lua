@@ -5,10 +5,11 @@ function TestState:enter()
     love.audio.stop()
     self.timer = Timer()
     self.stage = Stage()
+    self.world = World()
     self.timer:after(1, function()
         --Assets.playSound("splat")
-        self.stage:add(World())
-        self.stage:add(Hero())
+        self.stage:add(Hero("susie"))
+        self.stage:add(self.world)
     end)
 end
 

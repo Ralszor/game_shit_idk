@@ -16,8 +16,13 @@ function Object:init(x, y, w, h, scale_x, scale_y)
     self.scale_x = scale_x or 1
     self.scale_y = scale_y or 1
     self.stage = nil
+    self.layer = 0
 end
 
+---@param to_what integer
+function Object:setLayer(to_what)
+    self.layer = to_what
+end
 function Object:update()
     --Assets.dot()
 end

@@ -28,6 +28,7 @@ function LoadState:update()
     if msg then
         print(TableUtils.dump(msg))
         if msg.status == "finished" then
+            LoadState.Loader.in_channel:push("stop")
             Assets.loadData(msg.data.assets)
             StateManager.setState(LoadState.nextState)
         end
