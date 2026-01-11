@@ -116,7 +116,7 @@ function IntroObject:draw()
             Draw.rectangle("fill", 0, SCREEN_HEIGHT/4, SCREEN_WIDTH, SCREEN_HEIGHT/2)
         elseif self.con2 == 8 then
             Draw.rectangle("fill",0,0,SCREEN_WIDTH, SCREEN_HEIGHT)
-        elseif self.con2 == 9 hen
+        elseif self.con2 == 9 then
             love.graphics.clear(0,0,0,1)
             Draw.draw(Assets.getTexture("boardheart"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 1, 1, 0.5, 0.5)
         end
