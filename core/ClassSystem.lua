@@ -18,13 +18,24 @@ ClassSystem.CLASS_MT = {
 }
 
 ---@class Class
-ClassSystem.BASE_CLASS = {}
+---@field private __includes_all table<Class,boolean> Set of classes this class 
+ClassSystem.BASE_CLASS = {
+    __includes_all = {}
+}
 
 ClassSystem.CLASS_INCLUDE_SKIP_FIELDS = {
     ["classname"] = true,
+    ["__includes_all"] = true,
 }
 
 function ClassSystem.BASE_CLASS:init() end
+
+---@internal
+---@param class Class The class to check for inheritance
+---@param subclass Class The class to check for inheritance
+function ClassSystem.includes(class, subclass)
+    return class.__includes_all[subclass]
+end
 
 ---@generic T
 ---@param classname string
