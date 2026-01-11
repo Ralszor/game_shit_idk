@@ -122,7 +122,7 @@ function IntroObject:draw()
         end
         if self.rendering then
             Draw.setColor(COLORS.white)
-            Draw.draw(Assets.getTexture("hevy"), 0, 0)
+            Draw.draw(Assets.getTexture("testmod"), 0, 0)
             Draw.setColor(COLORS.black)
             love.graphics.rectangle("fill",0, SCREEN_HEIGHT, SCREEN_WIDTH, -SCREEN_HEIGHT+(30*self.con3))
         end
