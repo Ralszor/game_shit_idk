@@ -17,6 +17,8 @@ function Object:init(x, y, w, h, scale_x, scale_y)
     self.scale_y = scale_y or 1
     self.stage = nil
     self.layer = 0
+    self.origin_x = 0
+    self.origin_y = 0
 end
 
 ---@param to_what integer
@@ -27,7 +29,12 @@ function Object:update()
     --Assets.dot()
 end
 
-function Object:draw() end
+function Object:draw()
+    if self.sprite then
+        Draw.drawFrame(self.sprite, self.current_frame or 1, self.x, self.y, math.rad(self.rotation), self.scale_x, self.scale_y, self.origin_x, self.origin_y)
+        --Draw.drawSprite(self.sprite, self.sprite_frame)
+    end
+end
 
 function Object:fullDraw() end
 

@@ -311,7 +311,6 @@ end
 
 ---@param path string
 ---@return love.Image[]
-
 function Assets.getFramesOrTexture(path)
     local frames = Assets.getFrames(path)
     if frames and #frames > 0 then

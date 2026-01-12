@@ -13,6 +13,8 @@ end
 
 function Character:init(name, x, y, w, h, scale_x, scale_y)
     super.init(self, x, y, w, h, scale_x, scale_y)
+    self.origin_x = 0.5
+    self.origin_y = 1
     self.name = name or "kris"
     -- set this to the loader-relative base path for the char (relative to assets/sprites)
     self.path = normalize_assets_path("sprites/chars/"..self.name)
@@ -36,13 +38,13 @@ function Character:init(name, x, y, w, h, scale_x, scale_y)
 
     -- current animation state
     self.current_anim = "walk/down"
-    self.current_frames = self.animations[self.current_anim] or {}
+    self.sprite = self.animations[self.current_anim] or {}
     self.current_frame = 1
     self.animtimer = 0
 
     -- safe assignment: if frames missing, fall back to placeholder
     local ok, fallback = pcall(Assets.getTexture, "no_tiny")
-    self.sprite = (self.current_frames[1] ~= nil) and self.current_frames[1] or (ok and fallback)
+    self.current_texture = (self.sprite[1] ~= nil) and self.sprite[1] or (ok and fallback)
 end
 
 function Character:setAnimation(name)
@@ -58,10 +60,10 @@ function Character:setAnimation(name)
     -- but if you want it to restart every switch, uncomment the next line:
     -- self.animtimer = 0
     self.current_anim = name
-    self.current_frames = frames
+    self.sprite = frames
     self.current_frame = 1
     -- update sprite to the first frame immediately
-    self.sprite = self.current_frames[self.current_frame] or self.sprite
+    self.current_texture = self.sprite[self.current_frame] or self.current_texture
 end
 
 function Character:update(dt)
@@ -83,26 +85,26 @@ function Character:update(dt)
     if not nowMoving and prevMoving then
         self.animtimer = 0
         self.current_frame = 1
-        if self.current_frames and #self.current_frames > 0 then
-            self.sprite = self.current_frames[1] or self.sprite
+        if self.sprite and #self.sprite > 0 then
+            self.current_texture = self.sprite[1] or self.current_texture
         end
     end
 
     -- animate while moving
-    if nowMoving and self.current_frames and #self.current_frames > 1 then
+    if nowMoving and self.sprite and #self.sprite > 1 then
         self.animtimer = self.animtimer + (dt or (1/60))
         local speed = self.anim_speed or 0.12
-        local frame_index = math.floor(self.animtimer / speed) % #self.current_frames + 1
+        local frame_index = math.floor(self.animtimer / speed) % #self.sprite + 1
         if frame_index ~= self.current_frame then
             self.current_frame = frame_index
-            self.sprite = self.current_frames[self.current_frame] or self.sprite
+            self.current_texture = self.sprite[self.current_frame] or self.current_texture
         end
     end
 
     -- ensure fallback sprite when there are no frames
-    if (not self.current_frames or #self.current_frames == 0) then
+    if (not self.sprite or #self.sprite == 0) then
         local ok, tex = pcall(Assets.getTexture, "no_tiny")
-        if ok and tex then self.sprite = tex end
+        if ok and tex then self.current_texture = tex end
     end
 
     -- store moving state for next update
@@ -127,7 +129,6 @@ end
 
 function Character:draw()
     super.draw(self)
-    Draw.draw(self.sprite, self.x, self.y, math.rad(self.rotation), self.scale_x, self.scale_y, 0.5, 1)
 end
 
 return Character
