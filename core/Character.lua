@@ -41,10 +41,6 @@ function Character:init(name, x, y, w, h, scale_x, scale_y)
     self.sprite = self.animations[self.current_anim] or {}
     self.current_frame = 1
     self.animtimer = 0
-
-    -- safe assignment: if frames missing, fall back to placeholder
-    local ok, fallback = pcall(Assets.getTexture, "no_tiny")
-    self.current_texture = (self.sprite[1] ~= nil) and self.sprite[1] or (ok and fallback)
 end
 
 function Character:setAnimation(name)
@@ -62,8 +58,6 @@ function Character:setAnimation(name)
     self.current_anim = name
     self.sprite = frames
     self.current_frame = 1
-    -- update sprite to the first frame immediately
-    self.current_texture = self.sprite[self.current_frame] or self.current_texture
 end
 
 function Character:update(dt)
@@ -85,9 +79,6 @@ function Character:update(dt)
     if not nowMoving and prevMoving then
         self.animtimer = 0
         self.current_frame = 1
-        if self.sprite and #self.sprite > 0 then
-            self.current_texture = self.sprite[1] or self.current_texture
-        end
     end
 
     -- animate while moving
@@ -97,14 +88,7 @@ function Character:update(dt)
         local frame_index = math.floor(self.animtimer / speed) % #self.sprite + 1
         if frame_index ~= self.current_frame then
             self.current_frame = frame_index
-            self.current_texture = self.sprite[self.current_frame] or self.current_texture
         end
-    end
-
-    -- ensure fallback sprite when there are no frames
-    if (not self.sprite or #self.sprite == 0) then
-        local ok, tex = pcall(Assets.getTexture, "no_tiny")
-        if ok and tex then self.current_texture = tex end
     end
 
     -- store moving state for next update
