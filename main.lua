@@ -191,5 +191,11 @@ function love.draw()
     
     love.graphics.setCanvas()
     CANVAS:setFilter("nearest")
-    Draw.draw(CANVAS, love.graphics:getWidth()/2, love.graphics:getHeight()/2, 0, 2, 2, 0.5, 0.5)
+    local window_width, window_height = love.graphics.getDimensions()
+    local canvas_width, canvas_height = CANVAS:getDimensions()
+    local scale = math.min(window_width/canvas_width, window_height/canvas_height)
+    if scale > 3 then
+        scale = math.floor(scale)
+    end
+    Draw.draw(CANVAS, window_width/2, window_height/2, 0, scale, scale, 0.5, 0.5)
 end
