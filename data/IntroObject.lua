@@ -92,13 +92,13 @@ function IntroObject:draw()
         love.graphics.clear(69/255, 84/255, 237/255, 1)
         Draw.setColor(1,1,1,1)
         love.graphics.setFont(Assets.getFont("main", 8))
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-24, love.graphics.getWidth()/2, "center")
-        love.graphics.printf("| NO CONTROLLER |", 0, SCREEN_HEIGHT/2-10, love.graphics.getWidth()/2, "center")
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-2, love.graphics.getWidth()/2, "center")
+        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-24, SCREEN_WIDTH, "center")
+        love.graphics.printf("| NO CONTROLLER |", 0, SCREEN_HEIGHT/2-10, SCREEN_WIDTH, "center")
+        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-2, SCREEN_WIDTH, "center")
         
     end
     if self.prompt then
-        love.graphics.printf("Press Z to Continue", 0, SCREEN_HEIGHT/2+50, love.graphics.getWidth()/2, "center")
+        love.graphics.printf("Press Z to Continue", 0, SCREEN_HEIGHT/2+50, SCREEN_WIDTH, "center")
     end
     if self.pressed_z and not self.rendering then
         love.graphics.clear(0,0,0,0)
