@@ -19,7 +19,7 @@ function Character:init(name, x, y, w, h, scale_x, scale_y)
     self.hitbox = {}
     self.rotation = 0
     self.isMoving = false
-    self.layer = 1
+    self.layer = WORLD_LAYERS.PLAYER
 
     -- animation timing config
     self.anim_speed = 8/30 -- seconds per frame

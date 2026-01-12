@@ -179,7 +179,7 @@ function love.draw()
     Draw.setLineWidth(1)
     love.graphics.setFont(bigf)
     Draw.setColor(0, 1, 0, 1)
-    Draw.print("Tenna pissed\non my\nfucking wife", 20, 15)
+    Draw.print("V: Enter Menu \nC: Enter \nTestState", 20, 15)
     Draw.setColor(1,1,1,1)
     if StateManager.CurrentState.draw then
         StateManager.CurrentState:draw()

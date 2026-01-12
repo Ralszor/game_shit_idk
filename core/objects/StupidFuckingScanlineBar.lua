@@ -4,6 +4,7 @@ local StupidFuckingScanlineBar, super = class("StupidFuckingScanlineBar", Object
 function StupidFuckingScanlineBar:init(x, y, w, h, scale_x, scale_y)
     super.init(self, x, y, w, h, scale_x, scale_y)
     self.stupidGravity = 0
+    self.layer = 9999.1
 end
 
 function StupidFuckingScanlineBar:update()

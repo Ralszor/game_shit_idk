@@ -63,11 +63,6 @@ function Hero:handleMovement()
     if anim then
         self:setAnimation(anim)
     end
-
-    -- optional rotation key still handled:
-    if self.controller:isKeyDown("r") then
-        self.rotation = self.rotation + 1
-    end
 end
 
 return Hero
