@@ -1,6 +1,6 @@
 DT = 1/30
 
-CANVAS = love.graphics.newCanvas(256, 240)
+CANVAS = love.graphics.newCanvas(384, 288)
 
 
 SCREEN_WIDTH = CANVAS:getWidth()

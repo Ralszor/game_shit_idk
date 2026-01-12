@@ -85,16 +85,16 @@ function IntroObject:draw()
         love.graphics.clear(69/255, 84/255, 237/255, 1*self.con)
         if not self.warn then
             Draw.setColor(0,0,0,1*(self.con-0.25))
-            Draw.draw(Assets.getTexture("mantle_title"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 1, 1,0.5, 0.5)
+            Draw.draw(Assets.getTexture("mantle_title"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 2, 2,0.5, 0.5)
         end
     end
     if self.warn then
         love.graphics.clear(69/255, 84/255, 237/255, 1)
         Draw.setColor(1,1,1,1)
-        love.graphics.setFont(Assets.getFont("main", 8))
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-24, SCREEN_WIDTH, "center")
+        love.graphics.setFont(Assets.getFont("main", 16))
+        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-38, SCREEN_WIDTH, "center")
         love.graphics.printf("| NO CONTROLLER |", 0, SCREEN_HEIGHT/2-10, SCREEN_WIDTH, "center")
-        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2-2, SCREEN_WIDTH, "center")
+        love.graphics.printf("_______________ ", 0, SCREEN_HEIGHT/2+12, SCREEN_WIDTH, "center")
         
     end
     if self.prompt then
@@ -124,20 +124,20 @@ function IntroObject:draw()
             Draw.draw(Assets.getTexture("boardheart"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2-2, 0, 1, 1, 0.5, 0.5)
         end
     end
-            if self.rendering then
-            --love.graphics.setBackgroundColor(1,1,1,0)
-            Draw.setColor(COLORS.black)
-            love.graphics.rectangle("fill",0, SCREEN_HEIGHT+(30*self.con3), SCREEN_WIDTH, -SCREEN_HEIGHT)
-            Draw.setColor(COLORS.white)
-             if self.con3 <= 3 then
-                Draw.draw(Assets.getTexture("heart_topHalf"),  SCREEN_WIDTH/2, SCREEN_HEIGHT/2-6, 0, 1, 1, 0.5, 0.5)
-            end
-            if self.con3 <= 4 then
-                    Draw.draw(Assets.getTexture("heart_bottomHalf"),  SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, 0, 1, 1, 0.5, 0.5)
-            end
-           
-            --love.graphics.translate(0, 30*self.con3)
+    if self.rendering then
+        --love.graphics.setBackgroundColor(1,1,1,0)
+        Draw.setColor(COLORS.black)
+        love.graphics.rectangle("fill",0, SCREEN_HEIGHT+(32*self.con3), SCREEN_WIDTH, -SCREEN_HEIGHT)
+        Draw.setColor(COLORS.white)
+        if self.con3 <= 4 then
+            Draw.draw(Assets.getTexture("heart_topHalf"),  SCREEN_WIDTH/2, SCREEN_HEIGHT/2-6 + 16, 0, 1, 1, 0.5, 0.5)
         end
+        if self.con3 <= 5 then
+            Draw.draw(Assets.getTexture("heart_bottomHalf"),  SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3 + 16, 0, 1, 1, 0.5, 0.5)
+        end
+        
+        --love.graphics.translate(0, 30*self.con3)
+    end
 end
 
 function IntroObject:update()

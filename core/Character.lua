@@ -11,8 +11,8 @@ local function normalize_assets_path(p)
     return p
 end
 
-function Character:init(name, x, y, w, h, scale_x, scale_y)
-    super.init(self, x, y, w, h, scale_x, scale_y)
+function Character:init(name, x, y, w, h)
+    super.init(self, x, y, w, h, 2, 2)
     self.origin_x = 0.5
     self.origin_y = 1
     self.name = name or "kris"

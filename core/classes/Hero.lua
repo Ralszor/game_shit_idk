@@ -16,21 +16,15 @@ end
 
 function Hero:handleMovement()
     local dx, dy = 0, 0
-    local speed = 2
+    local speed = 4
 
     if self.controller:isKeyDown("left") then dx = dx - 1 end
     if self.controller:isKeyDown("right") then dx = dx + 1 end
     if self.controller:isKeyDown("up") then dy = dy - 1 end
     if self.controller:isKeyDown("down") then dy = dy + 1 end
 
-    -- move (normalize diagonal so diagonal speed isn't faster)
+    -- move
     if dx ~= 0 or dy ~= 0 then
-        -- normalize diagonal
-        if dx ~= 0 and dy ~= 0 then
-            local inv = 1 / math.sqrt(2)
-            dx = dx * inv
-            dy = dy * inv
-        end
         self.x = self.x + dx * speed
         self.y = self.y + dy * speed
         self.isMoving = true
