@@ -2,7 +2,7 @@
 local GameState = {}
 
 local IntroObject = require("data.IntroObject")
-ldtk = require("core.lib.ldtk")
+
 function GameState:enter()
     self.stage = Stage()
     self.player = Hero("kris", SCREEN_WIDTH/2, (SCREEN_HEIGHT/2) + 40)
@@ -12,7 +12,6 @@ function GameState:enter()
         print(i.classname.." Layer is "..i.layer)
     end
     self.tileLayers = {}
-    ldtk:load("data/maps/test_map.ldtk", 1)
 end
 
 function GameState:draw()
@@ -27,9 +26,6 @@ function GameState:draw()
     self.stage:draw()
 end
 
-function ldtk.onLayer(layer, level) 
-    table.insert(GameState.tileLayers,1, layer)
-end
 function GameState:update()
     self.stage:update()
 end
