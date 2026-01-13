@@ -36,11 +36,6 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="markers">
-  <object id="6" name="spawn" x="112" y="48">
-   <point/>
-  </object>
- </objectgroup>
  <layer id="3" name="Tile Layer 2" width="16" height="15">
   <data encoding="csv">
 13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
@@ -98,4 +93,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="5" name="markers">
+  <object id="6" name="spawn" x="112" y="48">
+   <point/>
+  </object>
+ </objectgroup>
 </map>

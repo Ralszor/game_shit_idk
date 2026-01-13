@@ -2,7 +2,7 @@
 local GameState = {}
 
 local IntroObject = require("data.IntroObject")
-
+local sti = require("core.lib.sti")
 function GameState:enter()
     self.stage = Stage()
     self.player = Hero("kris", SCREEN_WIDTH/2, (SCREEN_HEIGHT/2) + 40)
@@ -12,6 +12,7 @@ function GameState:enter()
         print(i.classname.." Layer is "..i.layer)
     end
     self.tileLayers = {}
+    self.map = sti("data/maps/testmap.lua")
 end
 
 function GameState:draw()
@@ -22,12 +23,15 @@ function GameState:draw()
         layer:draw()
     end
     love.graphics.pop()
+    self.map:draw(0,0,2,2)
     love.graphics.rectangle("fill", 0, 0, SCREEN_WIDTH, 32)
+    
     self.stage:draw()
 end
 
 function GameState:update()
     self.stage:update()
+    self.map:update()
 end
 
 return GameState
