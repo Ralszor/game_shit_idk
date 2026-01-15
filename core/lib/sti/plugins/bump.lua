@@ -17,6 +17,25 @@ return {
 	-- @return collidables table containing the handles to the objects in the Bump world.
 	bump_init = function(map, world)
 		local collidables = {}
+		
+		-- Helper function to get property value from Tiled's property array format
+		local function getProperty(obj, propName)
+			if not obj.properties then return nil end
+			
+			-- If properties is already a table (old format), return directly
+			if type(obj.properties) == "table" and obj.properties[propName] ~= nil then
+				return obj.properties[propName]
+			end
+			
+			-- If properties is an array (new Tiled format), search for the property
+			for i, prop in ipairs(obj.properties) do
+				if prop.name == propName then
+					return prop.value
+				end
+			end
+			
+			return nil
+		end
 
 		for _, tileset in ipairs(map.tilesets) do
 			for _, tile in ipairs(tileset.tiles) do
@@ -27,7 +46,7 @@ return {
 						-- Every object in every instance of a tile
 						if tile.objectGroup then
 							for _, object in ipairs(tile.objectGroup.objects) do
-								if object.properties.collidable == true then
+								if getProperty(object, "collidable") == true then
 									local t = {
 										name       = object.name,
 										type       = object.type,
@@ -47,7 +66,7 @@ return {
 						end
 
 						-- Every instance of a tile
-						if tile.properties and tile.properties.collidable == true then
+						if getProperty(tile, "collidable") == true then
 							local t = {
 								x          = instance.x + map.offsetx,
 								y          = instance.y + map.offsety,
@@ -67,15 +86,18 @@ return {
 		end
 
 		for _, layer in ipairs(map.layers) do
-			-- Entire layer
-			if layer.properties.collidable == true then
+			
+			local layerCollidableProp = getProperty(layer, "collidable")
+			
+			if layer.properties and layer.properties.collidable == true then
 				if layer.type == "tilelayer" then
 					for y, tiles in ipairs(layer.data) do
 						for x, tile in pairs(tiles) do
 
 							if tile.objectGroup then
 								for _, object in ipairs(tile.objectGroup.objects) do
-									if object.properties.collidable == true then
+									-- FIX: Check if properties exists before accessing it
+									if getProperty(object, "collidable") == true then
 										local t = {
 											name       = object.name,
 											type       = object.type,
@@ -118,8 +140,17 @@ return {
 			-- or whole collidable objects layer
 		  if layer.type == "objectgroup" then
 				for _, obj in ipairs(layer.objects) do
-					if layer.properties.collidable == true or obj.properties.collidable == true then
-						if obj.shape == "rectangle" then
+					local objCollidableProp = getProperty(obj, "collidable")
+					
+					-- Check if either the layer or the object is marked as collidable
+					local layerCollidable = layerCollidableProp == true
+					local objCollidable = objCollidableProp == true
+						
+					-- If layer is collidable, all objects in it are collidable
+					-- Otherwise, only objects with collidable property set to true
+					if layerCollidable or objCollidable then
+						-- Default to rectangle if shape is not specified
+						if not obj.shape or obj.shape == "rectangle" then
 							local t = {
 								name       = obj.name,
 								type       = obj.type,
@@ -137,7 +168,7 @@ return {
 
 							world:add(t, t.x, t.y, t.width, t.height)
 							table.insert(collidables, t)
-						end -- TODO implement other object shapes?
+						end
 					end
 				end
 			end
@@ -157,11 +188,11 @@ return {
 		for i = #collidables, 1, -1 do
 			local obj = collidables[i]
 
-			if obj.layer == layer
-			and (
-				layer.properties.collidable == true
-				or obj.properties.collidable == true
-			) then
+			-- FIX: Check if properties exist
+			local layerCollidable = layer.properties and layer.properties.collidable == true
+			local objCollidable = obj.properties and obj.properties.collidable == true
+
+			if obj.layer == layer and (layerCollidable or objCollidable) then
 				map.bump_world:remove(obj)
 				table.remove(collidables, i)
 			end

@@ -79,8 +79,12 @@ function IntroObject:doTheFuckingSequence(part)
         self.timer:script(function (wait)
             wait(0.5)
             if StateManager.CurrentState.map.properties then
-                local musicFile = StateManager.CurrentState.map.properties["music"]
-                StateManager.CurrentState.music:play(musicFile, 0.5, 1)
+                for _, prop in ipairs(StateManager.CurrentState.map.properties) do
+                    if prop.name == "music" then
+                        StateManager.CurrentState.music:play(prop.value, 0.5, 1)
+                        break
+                    end
+                end
             end
             self:remove()
         end)

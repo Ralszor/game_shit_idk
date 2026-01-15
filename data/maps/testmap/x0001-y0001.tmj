@@ -23,14 +23,25 @@
                  "width":96,
                  "x":64,
                  "y":96
+                }, 
+                {
+                 "height":64,
+                 "id":10,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"collidable",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":256,
+                 "x":96,
+                 "y":192
                 }],
          "opacity":1,
-         "properties":[
-                {
-                 "name":"collidable",
-                 "type":"bool",
-                 "value":true
-                }],
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -75,8 +86,14 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":6,
+ "nextobjectid":11,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"music",
+         "type":"string",
+         "value":"balls_music"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
  "tileheight":32,

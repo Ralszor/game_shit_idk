@@ -14,7 +14,7 @@ function GameState:enter()
     self.tileLayers = {}
     -- Load map with bump plugin enabled
     --self.map = nil
-    self:loadMap("testmap/x0001-y0001")
+    self:loadMap("testmap/x0001-y0001", {"bump"})
     
     -- Create bump world
     self.world = bump.newWorld(32)
@@ -23,6 +23,7 @@ function GameState:enter()
     local mapScale = 2
     
     -- Use STI's bump_init to add all collidable tiles/objects from the map
+    
     self.map:bump_init(self.world)
     if self.map.layers["collision"] then
         self.map.layers["collision"].visible = false
@@ -35,7 +36,7 @@ function GameState:enter()
     local items = self.world:getItems()
     for _, item in ipairs(items) do
         local x, y, w, h = self.world:getRect(item)
-        self.world:update(item, x * mapScale, y * mapScale, w * mapScale, h * mapScale)
+        self.world:update(item, x, y, w, h)
     end
     
     -- Find spawn point in the map
@@ -44,11 +45,11 @@ function GameState:enter()
         if layer.type == "objectgroup" then
             for _, obj in ipairs(layer.objects) do
                 if obj.name == "spawn" then
-                    spawnX = obj.x * mapScale
-                    spawnY = obj.y * mapScale
+                    spawnX = obj.x
+                    spawnY = obj.y
                     -- If it's a rectangle object, add the height to get bottom position
                     if obj.height and obj.height > 0 then
-                        spawnY = spawnY + (obj.height * mapScale)
+                        spawnY = spawnY + (obj.height)
                     end
                     break
                 end
@@ -78,6 +79,7 @@ function GameState:draw()
     if self.map then
         self.map:draw(0,0,1,1)
     end
+    Draw.setColor(COLORS.black)
     love.graphics.rectangle("fill", 0, 0, SCREEN_WIDTH, 32)
     Draw.setColor(COLORS.white)
     Draw.print("HP", 8, 8, SCREEN_WIDTH)
@@ -85,10 +87,10 @@ function GameState:draw()
     self.stage:draw()
 end
 
-function GameState:loadMap(map)
+function GameState:loadMap(map, mode)
     local path = "data/maps/" .. map .. ".tmj"
     local filestring = love.filesystem.read(path)
-    self.map = sti(path, {"bump"})
+    self.map = sti(path, mode)
 end
 
 function GameState:update()
