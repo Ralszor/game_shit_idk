@@ -5,6 +5,10 @@ CANVAS = love.graphics.newCanvas(384, 288)
 
 SCREEN_WIDTH = CANVAS:getWidth()
 SCREEN_HEIGHT = CANVAS:getHeight()
+MUSIC_VOLUME = 1
+MUSIC_VOLUMES = {}
+MUSIC_PITCH = 1
+MUSIC_PITCHES = {}
 
 WORLD_LAYERS = {
     BOTTOM = 0,

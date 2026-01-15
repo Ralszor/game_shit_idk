@@ -5,6 +5,10 @@ local CharacterController = require("core.classes.CharacterController")
 function Hero:init(name, x, y, w, h, scale_x, scale_y)
     super.init(self, name, x, y, w, h, scale_x, scale_y)
     self.controller = CharacterController()
+    self.hitbox = {-16,-32, 32, 32}
+    self.level = 1
+    self.max_health = 6
+    self.health = 3
 end
 
 function Hero:update()
@@ -14,6 +18,9 @@ function Hero:update()
     end
 end
 
+function Hero:draw()
+    super.draw(self)
+end
 function Hero:handleMovement()
     local dx, dy = 0, 0
     local speed = 4
@@ -23,10 +30,29 @@ function Hero:handleMovement()
     if self.controller:isKeyDown("up") then dy = dy - 1 end
     if self.controller:isKeyDown("down") then dy = dy + 1 end
 
-    -- move
+    -- move with collision detection
     if dx ~= 0 or dy ~= 0 then
-        self.x = self.x + dx * speed
-        self.y = self.y + dy * speed
+        local targetX = self.x + dx * speed
+        local targetY = self.y + dy * speed
+        
+        -- Use bump collision if world and collider exist
+        if StateManager.CurrentState.world and self.collider then
+            local hx, hy, hw, hh = self:getHitbox()
+            local actualX, actualY, cols, len = StateManager.CurrentState.world:move(
+                self.collider, 
+                targetX + hx, 
+                targetY + hy
+            )
+            -- Update position based on collision result (subtract hitbox offset)
+            self.x = actualX - hx
+            self.y = actualY - hy
+            
+        else
+            -- Fallback to no collision
+            self.x = targetX
+            self.y = targetY
+        end
+        
         self.isMoving = true
     else
         self.isMoving = false

@@ -3,20 +3,70 @@ local GameState = {}
 
 local IntroObject = require("data.IntroObject")
 local sti = require("core.lib.sti")
+local bump = require("core.lib.bump")
+local HeroHud = require("data.HeroHud")
+
 function GameState:enter()
     self.stage = Stage()
-    self.player = Hero("kris", SCREEN_WIDTH/2, (SCREEN_HEIGHT/2) + 40)
+    
+    self.music = Music()
+
+    self.tileLayers = {}
+    -- Load map with bump plugin enabled
+    self.map = sti("data/maps/testmap.lua", {"bump"})
+    
+    -- Create bump world
+    self.world = bump.newWorld(32)
+    
+    -- Scale factor for the map
+    local mapScale = 2
+    
+    -- Use STI's bump_init to add all collidable tiles/objects from the map
+    self.map:bump_init(self.world)
+    if self.map.layers["collision"] then
+        self.map.layers["collision"].visible = false
+    end
+    if self.map.layers["markers"] then
+        self.map.layers["markers"].visible = false
+    end
+    
+    -- Scale all collision objects to match the map's draw scale
+    local items = self.world:getItems()
+    for _, item in ipairs(items) do
+        local x, y, w, h = self.world:getRect(item)
+        self.world:update(item, x * mapScale, y * mapScale, w * mapScale, h * mapScale)
+    end
+    
+    -- Find spawn point in the map
+    local spawnX, spawnY = SCREEN_WIDTH/2, (SCREEN_HEIGHT/2) + 40 -- default
+    for _, layer in ipairs(self.map.layers) do
+        if layer.type == "objectgroup" then
+            for _, obj in ipairs(layer.objects) do
+                if obj.name == "spawn" then
+                    spawnX = obj.x * mapScale
+                    spawnY = obj.y * mapScale
+                    -- If it's a rectangle object, add the height to get bottom position
+                    if obj.height and obj.height > 0 then
+                        spawnY = spawnY + (obj.height * mapScale)
+                    end
+                    break
+                end
+            end
+        end
+    end
+    
+    self.player = Hero("kris", spawnX, spawnY)
     self.stage:add(self.player)
     self.stage:add(IntroObject())
     for _, i in ipairs(self.stage.objects) do
         print(i.classname.." Layer is "..i.layer)
     end
-    self.tileLayers = {}
-    self.map = sti("data/maps/testmap.lua")
+    self.stage:add(HeroHud())
+    HeroHud.reference = self.player
 end
 
 function GameState:draw()
-    Draw.draw(Assets.getTexture("testmod"), 0,0, 0, 1, 1)
+    --Draw.draw(Assets.getTexture("testmod"), 0,0, 0, 1, 1)
     love.graphics.push()
     love.graphics.scale(2)
     for _, layer in ipairs(self.tileLayers) do
@@ -24,7 +74,10 @@ function GameState:draw()
     end
     love.graphics.pop()
     self.map:draw(0,0,2,2)
+    Draw.setColor(COLORS.black)
     love.graphics.rectangle("fill", 0, 0, SCREEN_WIDTH, 32)
+    Draw.setColor(COLORS.white)
+    Draw.print("HP", 8, 8, SCREEN_WIDTH)
     
     self.stage:draw()
 end

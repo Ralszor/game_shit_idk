@@ -2,6 +2,8 @@
 local IntroObject, super = class("IntroObject", Object)
 local Input = require("core.Input")
 local Scanline = require("core.objects.StupidFuckingScanlineBar")
+local music = require("core.music")
+
 function IntroObject:init()
     super.init(self)
     love.audio.stop()
@@ -69,6 +71,16 @@ function IntroObject:doTheFuckingSequence(part)
                 print(i)
                 self.con3 = self.con3 + 1
                 wait(0.5)
+            end
+            self:doTheFuckingSequence(4)
+        end)
+    end
+    if part == 4 then
+        self.timer:script(function (wait)
+            wait(0.5)
+            if StateManager.CurrentState.map.properties then
+                local musicFile = StateManager.CurrentState.map.properties["music"]
+                StateManager.CurrentState.music:play(musicFile, 0.5, 1)
             end
             self:remove()
         end)

@@ -26,6 +26,8 @@ StringUtils = require("core.utils.StringUtils") --Totally not ripped from Krista
 Timer = require("core.lib.timer") --Totally not ripped from Kristal hehehehehe :3
 EventRegistry = require("core.EventRegistry") --Totally not ripped from Kristal hehehehehe :3
 
+Music = require("core.music") --Totally not ripped from Kristal hehehehehe :3
+
 important = love.filesystem.getInfo("very_important_file/coconut")
 
 function love.load(args)
