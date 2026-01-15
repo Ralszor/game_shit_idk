@@ -18,3 +18,4 @@ emmylua-love-docs-aug-2025/love.timer.lua
 emmylua-love-docs-aug-2025/love.touch.lua
 emmylua-love-docs-aug-2025/love.video.lua
 emmylua-love-docs-aug-2025/love.window.lua
+*.tiled-session
