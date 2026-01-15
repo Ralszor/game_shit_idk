@@ -31,8 +31,8 @@ local function new(map, plugins, ox, oy)
 	else
 		-- Check for valid map type
 		local ext = map:sub(-4, -1)
-		assert(ext == ".lua", string.format(
-			"Invalid file type: %s. File must be of type: lua.",
+		assert(ext == ".lua" or ext == ".tmj", string.format(
+			"Invalid file type: %s. File must be of type: lua or tmj.",
 			ext
 		))
 
@@ -43,7 +43,11 @@ local function new(map, plugins, ox, oy)
 		end
 
 		-- Load map
-		map = setmetatable(assert(love.filesystem.load(map))(), Map)
+        if ext == ".lua" then
+            map = setmetatable(assert(love.filesystem.load(map))(), Map)
+        else
+            map = setmetatable(JSON.decode(love.filesystem.read(map)), Map)
+        end
 	end
 
 	map:init(dir, plugins, ox, oy)
@@ -91,12 +95,23 @@ function Map:init(path, plugins, ox, oy)
 	-- Set tiles, images
 	local gid = 1
 	for i, tileset in ipairs(self.tilesets) do
+        local ts_path = path
+        if tileset.source then
+            local full_path = utils.format_path(path .. tileset.source)
+            ts_path = utils.format_path(full_path .. "/..")
+            local data = love.filesystem.read(full_path)
+            assert(data, full_path)
+            local firstgid = tileset.firstgid
+            tileset = JSON.decode(data)
+            tileset.firstgid = firstgid
+            self.tilesets[i] = tileset
+        end
 		assert(not tileset.filename, "STI does not support external Tilesets.\nYou need to embed all Tilesets.")
 
         if tileset.image then
             -- Cache images
             if lg.isCreated then
-                local formatted_path = utils.format_path(path .. tileset.image)
+                local formatted_path = utils.format_path(ts_path .. tileset.image)
 
                 if not STI.cache[formatted_path] then
                     utils.fix_transparent_color(tileset, formatted_path)
@@ -111,14 +126,14 @@ function Map:init(path, plugins, ox, oy)
             -- Build atlas for image collection
             local files, ids = {}, {}
             for j = 1, #tileset.tiles do
-                files[ j ] = utils.format_path(path .. tileset.tiles[j].image)
+                files[ j ] = utils.format_path(ts_path .. tileset.tiles[j].image)
                 ids[ j ] = tileset.tiles[j].id
             end
 
             local map = atlas.Atlas( files, "ids", ids )
 
             if lg.isCreated then
-                local formatted_path = utils.format_path(path .. tileset.name)
+                local formatted_path = utils.format_path(ts_path .. tileset.name)
 
                 if not STI.cache[formatted_path] then
                     -- No need to fix transparency color for collections
@@ -210,7 +225,7 @@ function Map:setTiles(index, tileset, gid)
 			local type = ""
 			local properties, terrain, animation, objectGroup
 
-			for _, tile in pairs(tileset.tiles) do
+			for _, tile in pairs(tileset.tiles or {}) do
 				if tile.id == id then
 					properties  = tile.properties
 					animation   = tile.animation
@@ -281,6 +296,8 @@ function Map:setAtlasTiles(index, tileset, coords, gid)
             end
         end
 
+        tile.width = tile.width or 16
+        tile.height = tile.height or 16
         local tile = {
             id          = tile.id,
             gid         = firstgid + tile.id,
@@ -339,8 +356,8 @@ function Map:setLayer(layer, path)
 		end
 	end
 
-	layer.x      = (layer.x or 0) + layer.offsetx + self.offsetx
-	layer.y      = (layer.y or 0) + layer.offsety + self.offsety
+	layer.x      = (layer.x or 0) + (layer.offsetx or 0) + (self.offsetx or 0)
+	layer.y      = (layer.y or 0) + (layer.offsety or 0) + (self.offsety or 0)
 	layer.update = function() end
 
 	if layer.type == "tilelayer" then
@@ -417,8 +434,8 @@ function Map:setObjectCoordinates(layer)
 		local y   = layer.y + object.y
 		local w   = object.width
 		local h   = object.height
-		local cos = math.cos(math.rad(object.rotation))
-		local sin = math.sin(math.rad(object.rotation))
+		local cos = math.cos(math.rad(object.rotation or 0))
+		local sin = math.sin(math.rad(object.rotation or 0))
 
 		if object.shape == "rectangle" and not object.gid then
 			object.rectangle = {}
@@ -471,48 +488,48 @@ function Map:getLayerTilePosition(layer, tile, x, y)
 	local tileX, tileY
 
 	if self.orientation == "orthogonal" then
-		tileX = (x - 1) * tileW + tile.offset.x
-		tileY = (y - 0) * tileH + tile.offset.y - tile.height
+		tileX = (x - 1) * tileW + (tile.offset and tile.offset.x or 0)
+		tileY = (y - 0) * tileH + (tile.offset and tile.offset.y or 0) - tile.height
 		tileX, tileY = utils.compensate(tile, tileX, tileY, tileW, tileH)
 	elseif self.orientation == "isometric" then
-		tileX = (x - y) * (tileW / 2) + tile.offset.x + layer.width * tileW / 2 - self.tilewidth / 2
-		tileY = (x + y - 2) * (tileH / 2) + tile.offset.y
+		tileX = (x - y) * (tileW / 2) + (tile.offset and tile.offset.x or 0) + layer.width * tileW / 2 - self.tilewidth / 2
+		tileY = (x + y - 2) * (tileH / 2) + (tile.offset and tile.offset.y or 0)
 	else
 		local sideLen = self.hexsidelength or 0
 		if self.staggeraxis == "y" then
 			if self.staggerindex == "odd" then
 				if y % 2 == 0 then
-					tileX = (x - 1) * tileW + tileW / 2 + tile.offset.x
+					tileX = (x - 1) * tileW + tileW / 2 + (tile.offset and tile.offset.x or 0)
 				else
-					tileX = (x - 1) * tileW + tile.offset.x
+					tileX = (x - 1) * tileW + (tile.offset and tile.offset.x or 0)
 				end
 			else
 				if y % 2 == 0 then
-					tileX = (x - 1) * tileW + tile.offset.x
+					tileX = (x - 1) * tileW + (tile.offset and tile.offset.x or 0)
 				else
-					tileX = (x - 1) * tileW + tileW / 2 + tile.offset.x
+					tileX = (x - 1) * tileW + tileW / 2 + (tile.offset and tile.offset.x or 0)
 				end
 			end
 
 			local rowH = tileH - (tileH - sideLen) / 2
-			tileY = (y - 1) * rowH + tile.offset.y
+			tileY = (y - 1) * rowH + (tile.offset and tile.offset.y or 0)
 		else
 			if self.staggerindex == "odd" then
 				if x % 2 == 0 then
-					tileY = (y - 1) * tileH + tileH / 2 + tile.offset.y
+					tileY = (y - 1) * tileH + tileH / 2 + (tile.offset and tile.offset.y or 0)
 				else
-					tileY = (y - 1) * tileH + tile.offset.y
+					tileY = (y - 1) * tileH + (tile.offset and tile.offset.y or 0)
 				end
 			else
 				if x % 2 == 0 then
-					tileY = (y - 1) * tileH + tile.offset.y
+					tileY = (y - 1) * tileH + (tile.offset and tile.offset.y or 0)
 				else
-					tileY = (y - 1) * tileH + tileH / 2 + tile.offset.y
+					tileY = (y - 1) * tileH + tileH / 2 + (tile.offset and tile.offset.y or 0)
 				end
 			end
 
 			local colW = tileW - (tileW - sideLen) / 2
-			tileX = (x - 1) * colW + tile.offset.x
+			tileX = (x - 1) * colW + (tile.offset and tile.offset.x or 0)
 		end
 	end
 

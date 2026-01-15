@@ -63,18 +63,21 @@ function GameState:enter()
     end
     self.stage:add(HeroHud())
     HeroHud.reference = self.player
+    self.tileLayers = {}
+    self:loadMap("testmap/x0001-y0001")
 end
 
 function GameState:draw()
     --Draw.draw(Assets.getTexture("testmod"), 0,0, 0, 1, 1)
     love.graphics.push()
-    love.graphics.scale(2)
+    -- love.graphics.scale(2)
     for _, layer in ipairs(self.tileLayers) do
         layer:draw()
     end
     love.graphics.pop()
-    self.map:draw(0,0,2,2)
-    Draw.setColor(COLORS.black)
+    if self.map then
+        self.map:draw(0,0,1,1)
+    end
     love.graphics.rectangle("fill", 0, 0, SCREEN_WIDTH, 32)
     Draw.setColor(COLORS.white)
     Draw.print("HP", 8, 8, SCREEN_WIDTH)
@@ -82,9 +85,17 @@ function GameState:draw()
     self.stage:draw()
 end
 
+function GameState:loadMap(map)
+    local path = "data/maps/" .. map .. ".tmj"
+    local filestring = love.filesystem.read(path)
+    self.map = sti(path)
+end
+
 function GameState:update()
     self.stage:update()
-    self.map:update()
+    if self.map then
+        self.map:update(DT)
+    end
 end
 
 return GameState

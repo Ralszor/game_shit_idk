@@ -1,0 +1,13 @@
+{
+    "onlyShowAdjacentMaps": false,
+    "patterns": [
+        {
+            "regexp": "x0*(\\d+)-y0*(\\d+)\\.tm[xj]",
+            "multiplierX": 384,
+            "multiplierY": 256,
+            "offsetX": -384,
+            "offsetY": -256
+        }
+    ],
+    "type": "world"
+}
