@@ -25,14 +25,14 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.2",
- "tileheight":16,
+ "tiledversion":"1.10.2",
+ "tileheight":32,
  "tilesets":[
         {
          "firstgid":1,
          "source":"..\/..\/tilesets\/board_adventure.tsj"
         }],
- "tilewidth":16,
+ "tilewidth":32,
  "type":"map",
  "version":"1.10",
  "width":12

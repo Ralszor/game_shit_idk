@@ -3,6 +3,40 @@
  "infinite":false,
  "layers":[
         {
+         "draworder":"topdown",
+         "id":3,
+         "name":"collision",
+         "objects":[
+                {
+                 "height":96,
+                 "id":5,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"collidable",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":64,
+                 "y":96
+                }],
+         "opacity":1,
+         "properties":[
+                {
+                 "name":"collidable",
+                 "type":"bool",
+                 "value":true
+                }],
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "data":[18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
             18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
             18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
@@ -40,11 +74,11 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":2,
+ "nextlayerid":4,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.2",
+ "tiledversion":"1.10.2",
  "tileheight":32,
  "tilesets":[
         {

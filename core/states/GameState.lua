@@ -13,7 +13,8 @@ function GameState:enter()
 
     self.tileLayers = {}
     -- Load map with bump plugin enabled
-    self.map = sti("data/maps/testmap.lua", {"bump"})
+    --self.map = nil
+    self:loadMap("testmap/x0001-y0001")
     
     -- Create bump world
     self.world = bump.newWorld(32)
@@ -64,7 +65,6 @@ function GameState:enter()
     self.stage:add(HeroHud())
     HeroHud.reference = self.player
     self.tileLayers = {}
-    self:loadMap("testmap/x0001-y0001")
 end
 
 function GameState:draw()
@@ -88,7 +88,7 @@ end
 function GameState:loadMap(map)
     local path = "data/maps/" .. map .. ".tmj"
     local filestring = love.filesystem.read(path)
-    self.map = sti(path)
+    self.map = sti(path, {"bump"})
 end
 
 function GameState:update()
