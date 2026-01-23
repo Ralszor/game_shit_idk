@@ -14,7 +14,7 @@ function GameState:enter()
     self.tileLayers = {}
     -- Load map with bump plugin enabled
     --self.map = nil
-    self:loadMap("testmap/x0001-y0001", {"bump"})
+    self:loadMap("testmap/x0001-y0001", {"bump"}, 0, 32)
     
     -- Create bump world
     self.world = bump.newWorld(32)
@@ -53,6 +53,7 @@ function GameState:enter()
                     end
                     break
                 end
+                print(obj.name)
             end
         end
     end
@@ -79,18 +80,14 @@ function GameState:draw()
     if self.map then
         self.map:draw(0,0,1,1)
     end
-    Draw.setColor(COLORS.black)
-    love.graphics.rectangle("fill", 0, 0, SCREEN_WIDTH, 32)
-    Draw.setColor(COLORS.white)
-    Draw.print("HP", 8, 8, SCREEN_WIDTH)
     
     self.stage:draw()
 end
 
-function GameState:loadMap(map, mode)
+function GameState:loadMap(map, mode, ox, oy)
     local path = "data/maps/" .. map .. ".tmj"
     local filestring = love.filesystem.read(path)
-    self.map = sti(path, mode)
+    self.map = sti(path, mode, ox, oy)
 end
 
 function GameState:update()

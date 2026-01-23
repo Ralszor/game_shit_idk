@@ -77,7 +77,6 @@ function IntroObject:doTheFuckingSequence(part)
     end
     if part == 4 then
         self.timer:script(function (wait)
-            wait(0.5)
             if StateManager.CurrentState.map.properties then
                 for _, prop in ipairs(StateManager.CurrentState.map.properties) do
                     if prop.name == "music" then

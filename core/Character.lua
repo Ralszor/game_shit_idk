@@ -31,7 +31,7 @@ function Character:init(name, x, y, w, h)
     self.collider = nil -- will be set when added to bump world
     
     -- animation timing config
-    self.anim_speed = 8/30 -- seconds per frame
+    self.anim_speed = 5/30 -- seconds per frame
     
     local base = normalize_assets_path(self.path)
     self.animations = {

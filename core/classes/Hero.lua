@@ -7,7 +7,15 @@ function Hero:init(name, x, y, w, h, scale_x, scale_y)
     self.controller = CharacterController()
     self.hitbox = {-16,-32, 32, 32}
     self.level = 1
-    self.max_health = 6
+    self.max_health = 12
+    self.exp = 0
+    self.exp_needed = {
+        [1] = 0,
+        [2] = 4,
+        [3] = 15,
+        [4] = 14,
+        [5] = 99999
+    }
     self.health = 3
 end
 
@@ -21,9 +29,28 @@ end
 function Hero:draw()
     super.draw(self)
 end
+
+function Hero:addExp(howMuch)
+    self.exp = self.exp + howMuch
+    if self.exp >= (self.exp_needed[self.level+1] or math.huge) then
+        self:levelUp()
+    end
+end
+
+function Hero:levelUp()
+    self.level = MathUtils.clamp(self.level+1, 1, 4)
+    self.exp = 0
+    Assets.playSound("board_ominous")
+end
+
 function Hero:handleMovement()
     local dx, dy = 0, 0
     local speed = 4
+
+    if self.controller:isKeyPressed("q") then
+        self:addExp(1)
+        Assets.playSound("ui_tick")
+    end
 
     if self.controller:isKeyDown("left") then dx = dx - 1 end
     if self.controller:isKeyDown("right") then dx = dx + 1 end

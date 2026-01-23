@@ -20,6 +20,8 @@ function StateRenderingBullshit:draw()
             love.graphics.rectangle("line", x, y, w, h)
         end
         love.graphics.setColor(1, 1, 1, 1)
+    elseif Input.isKeyDown("lctrl" or "rctrl") and Input.isKeyDown("r") then
+        love.event.quit("restart")
     end
 end
 
